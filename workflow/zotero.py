@@ -6,6 +6,7 @@ Write operations (tags, notes) use the Zotero Web API when credentials are suppl
 """
 
 import os
+import re
 from typing import Any, Optional
 
 import httpx
@@ -90,11 +91,35 @@ def _extract_citekey(extra: str) -> str:
 
 # ── public API ───────────────────────────────────────────────────────────────
 
+_ITEM_KEY_RE = re.compile(r"^[A-Z0-9]{8}$")
+
+
 def search_items(query: str, limit: int = 10) -> list[dict]:
     """
     Search Zotero library by keyword (title, author, DOI, or citekey).
-    Returns a list of item summary dicts.
+
+    If ``query`` looks like a Zotero item key (8 uppercase alphanumeric chars),
+    a direct item lookup is attempted first so we return the parent item rather
+    than accidentally matching an attachment with the same full-text index.
+    Falls back to keyword search when the direct lookup fails or returns an
+    attachment/note.
     """
+    if _ITEM_KEY_RE.match(query):
+        try:
+            item = _local(f"/api/users/0/items/{query}")
+            d = item.get("data", {})
+            # Accept only top-level items, not attachments or notes
+            if d.get("itemType") not in ("attachment", "note"):
+                return [_summarize(item)]
+            # It's an attachment — try fetching its parent
+            parent_key = d.get("parentItem")
+            if parent_key:
+                parent = _local(f"/api/users/0/items/{parent_key}")
+                if parent.get("data", {}).get("itemType") not in ("attachment", "note"):
+                    return [_summarize(parent)]
+        except Exception:
+            pass  # fall through to keyword search
+
     data = _local("/api/users/0/items", q=query, limit=limit,
                   itemType="-attachment || -note")
     return [_summarize(it) for it in data]

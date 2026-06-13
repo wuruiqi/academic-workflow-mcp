@@ -23,5 +23,6 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Local AI dev notes (use AGENT.md for committed AI context)
+# Local AI dev notes and internal dev assets (use AGENT.md for committed AI context)
 CLAUDE.md
+_local/

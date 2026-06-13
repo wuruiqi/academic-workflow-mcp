@@ -180,6 +180,31 @@ def delete_note(path: str) -> dict:
 
 # ── convenience ───────────────────────────────────────────────────────────────
 
+def list_literature_notes() -> list[str]:
+    """
+    List all citekeys in the Literature folder.
+
+    Returns a list of filenames without the .md extension (= citekeys).
+    Returns an empty list if the folder does not exist or Obsidian is offline.
+    """
+    url = f"{OBSIDIAN_URL}/vault/{LITERATURE_FOLDER}/"
+    try:
+        with httpx.Client(trust_env=False, timeout=15) as client:
+            r = client.get(url, headers={"Authorization": f"Bearer {OBSIDIAN_API_KEY}"})
+        if r.status_code == 404:
+            return []
+        r.raise_for_status()
+        data = r.json()
+        files = data.get("files", [])
+        return [
+            f.split("/")[-1].removesuffix(".md")
+            for f in files
+            if f.endswith(".md")
+        ]
+    except Exception:
+        return []
+
+
 def literature_path(citekey: str) -> str:
     """Return the vault-relative path for a literature note."""
     return f"{LITERATURE_FOLDER}/{citekey}.md"

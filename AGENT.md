@@ -1,7 +1,10 @@
-# academic-workflow-mcp — Agent Overview
+# zo-bridge — Agent Overview
 
-MCP server bridging **Zotero** and **Obsidian** for AI-assisted academic reading workflows.
+MCP server bridging **Zotero** and **Obsidian** into one AI-assisted reading-and-notes workflow.
 Compatible with Claude Code, Codex, OpenClaw, Cursor, and any stdio MCP client.
+
+Generated notes are **project-neutral knowledge assets** — no "relevance to project X"
+section; project relevance is tracked via tags/back-links, not baked into the note.
 
 ## Architecture
 
@@ -15,11 +18,11 @@ workflow/
 tests/
   test_unit.py     # Unit tests (no live services needed)
   test_connection.py  # Integration tests (require Zotero + Obsidian running)
-pyproject.toml     # Package metadata, version, entry-point: academic-workflow-mcp → server:main
+pyproject.toml     # Package metadata, version, entry-point: zo-bridge → server:main
 .env.example       # Config template
 ```
 
-## Tools (v0.2.0)
+## Tools (v0.3.0)
 
 | # | Tool | What it does |
 |---|------|--------------|
@@ -48,7 +51,7 @@ pyproject.toml     # Package metadata, version, entry-point: academic-workflow-m
 | `OBSIDIAN_API_KEY` | — | Local REST API plugin key |
 | `OBSIDIAN_URL` | `http://127.0.0.1:27123` | |
 | `OBSIDIAN_VAULT_NAME` | — | For `obsidian://` deep-links |
-| `LITERATURE_FOLDER` | `10-Literature` | Vault subfolder for notes |
+| `LITERATURE_FOLDER` | `0-Literature` | Vault subfolder for notes |
 | `ZOTERO_LOCAL_URL` | `http://127.0.0.1:23119` | |
 | `ZOTERO_API_KEY` | — | Required for write ops |
 | `ZOTERO_LIBRARY_ID` | — | Numeric; from zotero.org/settings/keys |

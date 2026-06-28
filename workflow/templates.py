@@ -2,12 +2,20 @@
 Note templates and formatting helpers.
 
 Produces the standardized two-level note structure:
-  • Obsidian deep note  — full analysis, stored in 10-Literature/<citekey>.md
+  • Obsidian deep note  — full analysis, stored in <LITERATURE_FOLDER>/<citekey>.md
   • Zotero child note   — ≤200-char summary + link back to Obsidian
+
+Notes are deliberately project-neutral: a paper is a reusable knowledge asset,
+so the deep note carries no "relevance to project X" section. Which project a
+paper serves is decided later by each project owner, via tags/back-links — not
+hard-coded into the note.
 """
 
+import os
 from datetime import date
 from typing import Any
+
+LITERATURE_FOLDER = os.getenv("LITERATURE_FOLDER", "0-Literature")
 
 
 # ── Obsidian note ─────────────────────────────────────────────────────────────
@@ -45,7 +53,10 @@ def build_note_skeleton(citekey: str, meta: dict, sections: dict | None = None) 
 
     Standard headings (in order):
       one_line_summary, research_question, methods, results,
-      contributions, limitations, relevance, highlights, further_reading
+      contributions, limitations, highlights
+
+    The note is project-neutral: no "relevance to project" section. Related
+    papers are linked via the `related` frontmatter field ([[citekey]] links).
     """
     s = sections or {}
 
@@ -68,12 +79,8 @@ def build_note_skeleton(citekey: str, meta: dict, sections: dict | None = None) 
               "Key metrics — numbers must be extracted from the paper, not inferred")
         + sec("Contributions", "创新点", "contributions")
         + sec("Limitations & Open Questions", "局限与可质疑之处", "limitations")
-        + sec("Relevance to My Research", "与我课题的关系", "relevance",
-              "⚠️ Pending human review: AI suggestion below — edit and remove this comment")
         + sec("Highlights from Paper", "关键引文摘录", "highlights",
               "Synced from Zotero annotations — run workflow_sync_highlights to populate")
-        + sec("Further Reading", "延伸阅读", "further_reading",
-              "Use [[citekey]] wiki-links")
     )
 
 
@@ -91,7 +98,7 @@ def build_zotero_note(citekey: str, summary: str, rating: str = "⭐⭐⭐",
     """
     link = ""
     if vault_name:
-        link = f"\nDeep note → obsidian://open?vault={vault_name}&file=10-Literature/{citekey}"
+        link = f"\nDeep note → obsidian://open?vault={vault_name}&file={LITERATURE_FOLDER}/{citekey}"
 
     cite_str = f" | Cite in: {cite_in}" if cite_in else ""
     return f"{rating} {summary}{cite_str}\nStatus: pending-review{link}"

@@ -48,7 +48,7 @@ def test_obsidian_read_write_roundtrip(tmp_path):
         pytest.skip("OBSIDIAN_API_KEY not set")
 
     test_path = "99-Attachments/_mcp_test.md"
-    content = "# MCP Test\n\nThis file was written by academic-workflow-mcp tests.\n"
+    content = "# MCP Test\n\nThis file was written by zo-bridge tests.\n"
 
     result = obsidian.write_note(test_path, content)
     assert result["success"]

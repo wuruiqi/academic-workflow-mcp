@@ -1,11 +1,11 @@
-# academic-workflow-mcp
+# zo-bridge
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 
-An [MCP](https://modelcontextprotocol.io) server that connects **Zotero** and **Obsidian** into a streamlined AI-assisted academic reading workflow — compatible with Claude Code, Codex, OpenClaw, Cursor, and any other MCP client.
+**zo-bridge** is an [MCP](https://modelcontextprotocol.io) server that connects **Zotero** and **Obsidian** into one streamlined, AI-assisted workflow — compatible with Claude Code, Codex, OpenClaw, Cursor, and any other MCP client.
 
-> **中文简介：** 将 Zotero（文献管理）与 Obsidian（知识库）连接为统一的 AI 辅助科研精读工作流。支持批量导入 PDF、自动提取标题、查重检测、双向删除同步，以及完整的精读笔记生成与归档流程。
+> **中文简介：** zo-bridge 将 Zotero（文献管理）与 Obsidian（知识库）连接为统一的 AI 辅助工作流。支持批量导入 PDF、自动提取标题、查重检测、双向删除同步，以及结构化笔记的生成与归档。生成的笔记是**项目无关的中立知识资产**，不绑定任何具体课题。
 
 ---
 
@@ -46,22 +46,22 @@ The AI handles **analysis and writing**; the MCP server handles **plumbing** (AP
 ### Option A — pip from GitHub (recommended)
 
 ```bash
-pip install git+https://github.com/wuruiqi/academic-workflow-mcp.git
+pip install git+https://github.com/wuruiqi/zo-bridge.git
 ```
 
-This installs an `academic-workflow-mcp` command that starts the stdio MCP server.
+This installs an `zo-bridge` command that starts the stdio MCP server.
 
 ### Option B — uvx (no install)
 
 ```bash
-uvx --from git+https://github.com/wuruiqi/academic-workflow-mcp.git academic-workflow-mcp
+uvx --from git+https://github.com/wuruiqi/zo-bridge.git zo-bridge
 ```
 
 ### Option C — clone and run
 
 ```bash
-git clone https://github.com/wuruiqi/academic-workflow-mcp.git
-cd academic-workflow-mcp
+git clone https://github.com/wuruiqi/zo-bridge.git
+cd zo-bridge
 pip install -e .
 cp .env.example .env    # fill in your keys
 ```
@@ -77,7 +77,7 @@ Copy `.env.example` to `.env` and fill in your values:
 | `OBSIDIAN_API_KEY` | — | ✅ | Key from the Local REST API plugin settings |
 | `OBSIDIAN_URL` | `http://127.0.0.1:27123` | | Obsidian REST API base URL |
 | `OBSIDIAN_VAULT_NAME` | — | | Vault name for `obsidian://` deep-links |
-| `LITERATURE_FOLDER` | `10-Literature` | | Vault folder for literature notes |
+| `LITERATURE_FOLDER` | `0-Literature` | | Vault folder for literature notes |
 | `ZOTERO_LOCAL_URL` | `http://127.0.0.1:23119` | | Zotero local connector URL |
 | `ZOTERO_API_KEY` | — | for writes | Zotero Web API key |
 | `ZOTERO_LIBRARY_ID` | — | for writes | Numeric library ID (shown at zotero.org/settings/keys) |
@@ -93,8 +93,8 @@ Copy `.env.example` to `.env` and fill in your values:
 ```json
 {
   "mcpServers": {
-    "academic-workflow": {
-      "command": "academic-workflow-mcp",
+    "zo-bridge": {
+      "command": "zo-bridge",
       "env": {
         "OBSIDIAN_API_KEY": "your_key",
         "OBSIDIAN_VAULT_NAME": "Research",
@@ -112,9 +112,9 @@ Copy `.env.example` to `.env` and fill in your values:
 ```json
 {
   "mcpServers": {
-    "academic-workflow": {
+    "zo-bridge": {
       "type": "stdio",
-      "command": "academic-workflow-mcp"
+      "command": "zo-bridge"
     }
   }
 }
@@ -125,13 +125,13 @@ Or with uvx (no pre-install):
 ```json
 {
   "mcpServers": {
-    "academic-workflow": {
+    "zo-bridge": {
       "type": "stdio",
       "command": "uvx",
       "args": [
         "--from",
-        "git+https://github.com/wuruiqi/academic-workflow-mcp.git",
-        "academic-workflow-mcp"
+        "git+https://github.com/wuruiqi/zo-bridge.git",
+        "zo-bridge"
       ]
     }
   }
@@ -166,7 +166,7 @@ workflow_get_paper("wang2024deep")
 
 # Then generate the note content and call:
 workflow_write_note(citekey, metadata, sections)
-  → creates 10-Literature/wang2024deep.md in Obsidian
+  → creates 0-Literature/wang2024deep.md in Obsidian
 
 workflow_attach_zotero_note(item_key, citekey, summary)
   → adds a summary note under the Zotero item
@@ -214,6 +214,7 @@ zotero: "zotero://select/library/items/XXXXXXXX"
 tags: [literature]
 rating: ⭐⭐⭐
 status: pending-review
+related: []
 ---
 
 ## One-line Summary / 一句话总结
@@ -222,10 +223,13 @@ status: pending-review
 ## Key Results / 主要结果
 ## Contributions / 创新点
 ## Limitations & Open Questions / 局限与可质疑之处
-## Relevance to My Research / 与我课题的关系
 ## Highlights from Paper / 关键引文摘录
-## Further Reading / 延伸阅读
 ```
+
+Notes are **project-neutral** by design: there is no "relevance to my project"
+section — a paper is a reusable knowledge asset, and which project it serves is
+decided later via tags and back-links. Related papers are linked through the
+`related` frontmatter field (`["[[other2024key]]"]`).
 
 Highlights are grouped by annotation color:
 
@@ -263,7 +267,7 @@ Returns grouped duplicate sets with a `suggested_keep` item key for each group.
 Retrieve metadata, full text, and annotations from Zotero by citekey, item key, DOI, or title.
 
 ### `workflow_write_note(citekey, metadata, sections, overwrite=False)`
-Write a structured literature note to `10-Literature/<citekey>.md` with `status: pending-review`.
+Write a structured literature note to `0-Literature/<citekey>.md` with `status: pending-review`.
 
 ### `workflow_attach_zotero_note(item_key, citekey, summary, rating, cite_in)`
 Create a short child note under the Zotero item with an `obsidian://` back-link.
@@ -293,8 +297,8 @@ Bidirectional deletion sync between Zotero and Obsidian.
 ## 🛠 Development
 
 ```bash
-git clone https://github.com/wuruiqi/academic-workflow-mcp.git
-cd academic-workflow-mcp
+git clone https://github.com/wuruiqi/zo-bridge.git
+cd zo-bridge
 pip install -e ".[dev]"
 cp .env.example .env
 python -m pytest tests/ -m "not integration"
@@ -305,6 +309,11 @@ Integration tests (`-m integration`) require Zotero and Obsidian to be running.
 ---
 
 ## 📋 Changelog
+
+### v0.3.0
+- **Renamed**: project is now **zo-bridge** (package, command, and MCP server name all changed from `academic-workflow-mcp` → `zo-bridge`). Update your client config's command and server key.
+- **Notes are now project-neutral**: the literature note template drops the "Relevance to My Research" and "Further Reading" sections — a note is a reusable knowledge asset; project relevance is tracked via tags/back-links, not baked into the note. Related papers go in the `related` frontmatter field.
+- **Default `LITERATURE_FOLDER`** changed from `10-Literature` → `0-Literature`.
 
 ### v0.2.0
 - **New**: `workflow_import_pdfs` — batch PDF import with real-title extraction, filename/content mismatch detection, and smart deduplication

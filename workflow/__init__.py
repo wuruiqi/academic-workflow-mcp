@@ -1,1 +1,1 @@
-# academic-workflow-mcp — workflow package
+# zo-bridge — workflow package

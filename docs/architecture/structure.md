@@ -1,7 +1,7 @@
 # Project Structure
 
 ```
-academic-workflow-mcp/
+zo-bridge/
 ├── server.py              # FastMCP entry point; all 10 @mcp.tool() definitions
 ├── workflow/
 │   ├── zotero.py          # Zotero local API (port 23119) + Web API; PDF import helpers
@@ -11,7 +11,7 @@ academic-workflow-mcp/
 ├── tests/
 │   ├── test_unit.py       # Unit tests (no live services)
 │   └── test_connection.py # Integration tests (require Zotero + Obsidian)
-├── pyproject.toml         # Package metadata; entry-point: academic-workflow-mcp → server:main
+├── pyproject.toml         # Package metadata; entry-point: zo-bridge → server:main
 ├── AGENT.md               # AI tool quick-start (architecture, tools, env vars)
 └── docs/                  # This directory
 ```

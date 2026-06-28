@@ -3,9 +3,9 @@ requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "academic-workflow-mcp"
-version = "0.2.0"
-description = "MCP server for AI-assisted academic literature reading: Zotero + Obsidian workflow"
+name = "zo-bridge"
+version = "0.3.0"
+description = "zo-bridge — an MCP server bridging Zotero and Obsidian into one AI-assisted workflow"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -28,12 +28,12 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/wuruiqi/academic-workflow-mcp"
-Repository = "https://github.com/wuruiqi/academic-workflow-mcp"
-Issues = "https://github.com/wuruiqi/academic-workflow-mcp/issues"
+Homepage = "https://github.com/wuruiqi/zo-bridge"
+Repository = "https://github.com/wuruiqi/zo-bridge"
+Issues = "https://github.com/wuruiqi/zo-bridge/issues"
 
 [project.scripts]
-academic-workflow-mcp = "server:main"
+zo-bridge = "server:main"
 
 [tool.setuptools]
 py-modules = ["server"]

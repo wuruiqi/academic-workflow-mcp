@@ -39,11 +39,11 @@ def test_build_note_skeleton_has_all_headings():
         "Key Results",
         "Contributions",
         "Limitations",
-        "Relevance to My Research",
         "Highlights from Paper",
-        "Further Reading",
     ]:
         assert heading in note, f"Missing heading: {heading}"
+    # Notes are project-neutral — no "relevance to project" section.
+    assert "Relevance to My Research" not in note
 
 
 def test_build_note_skeleton_with_sections():

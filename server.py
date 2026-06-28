@@ -1,13 +1,14 @@
 """
-academic-workflow-mcp — server entry point
+zo-bridge — server entry point
 
-An MCP server that bridges Zotero and Obsidian for academic literature workflows.
-Compatible with any MCP client: Claude Code, Codex, OpenClaw, Cursor, etc.
+An MCP server that bridges two local desktop apps (a reference manager and a
+notes vault) into one streamlined workflow. Compatible with any MCP client:
+Claude Code, Codex, OpenClaw, Cursor, etc.
 
 Start with:
   python server.py
 Or after pip install:
-  academic-workflow-mcp
+  zo-bridge
 """
 
 import os
@@ -21,10 +22,10 @@ load_dotenv(Path(__file__).parent / ".env")
 
 from workflow import zotero, obsidian, templates
 
-mcp = FastMCP("academic-workflow")
+mcp = FastMCP("zo-bridge")
 
 VAULT_NAME = os.getenv("OBSIDIAN_VAULT_NAME", "")
-LITERATURE_FOLDER = os.getenv("LITERATURE_FOLDER", "10-Literature")
+LITERATURE_FOLDER = os.getenv("LITERATURE_FOLDER", "0-Literature")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -110,7 +111,7 @@ def workflow_write_note(
 ) -> dict:
     """
     Write a structured literature note directly to the Obsidian vault at
-    10-Literature/<citekey>.md with proper YAML frontmatter and section headings.
+    <LITERATURE_FOLDER>/<citekey>.md with proper YAML frontmatter and section headings.
 
     The note is created with status "pending-review". Call workflow_confirm_review
     after the human has checked the note.
@@ -121,8 +122,9 @@ def workflow_write_note(
                   doi, zotero_link. Use the 'item' dict from workflow_get_paper.
         sections: Dict mapping section keys to content strings. Recognized keys:
                     one_line_summary, research_question, methods, results,
-                    contributions, limitations, relevance, highlights, further_reading
+                    contributions, limitations, highlights
                   Any key may be omitted; the heading is still written with a placeholder.
+                  Notes are project-neutral — there is no "relevance to project" section.
         overwrite: If False (default) and a note already exists, returns an error
                    so you do not silently clobber a reviewed note.
 

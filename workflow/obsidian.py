@@ -13,7 +13,7 @@ import httpx
 
 OBSIDIAN_URL = os.getenv("OBSIDIAN_URL", "http://127.0.0.1:27123")
 OBSIDIAN_API_KEY = os.getenv("OBSIDIAN_API_KEY", "")
-LITERATURE_FOLDER = os.getenv("LITERATURE_FOLDER", "10-Literature")
+LITERATURE_FOLDER = os.getenv("LITERATURE_FOLDER", "0-Literature")
 VAULT_NAME = os.getenv("OBSIDIAN_VAULT_NAME", "")
 
 
